@@ -74,7 +74,7 @@ async function registerUser(event) {
 
             if (data.success) {
                 alert("Registrierung erfolgreich!");
-                window.location.href = "../login"; // Weiterleitung zur Login-Seite
+                window.location.href = "../Login"; // Weiterleitung zur Login-Seite
             } else {
                 alert("Fehler: " + data.message);
             }
