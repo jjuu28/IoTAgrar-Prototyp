@@ -63,6 +63,8 @@ async function loginUser(event) {
                         // Speichern im LocalStorage (bleibt nach Browser-Neustart erhalten)
                         localStorage.setItem("userId", data.userId);
                         localStorage.setItem("authToken", data.token);
+                        sessionStorage.setItem("userId", data.userId);
+                        sessionStorage.setItem("authToken", data.token);
                     } else {
                         // Speichern in der SessionStorage (nur für die aktuelle Sitzung)
                         sessionStorage.setItem("userId", data.userId);
@@ -71,7 +73,7 @@ async function loginUser(event) {
                 }
 
                 // Weiterleitung zur Dashboard-Seite
-                window.location.href = "dashboard.html";
+                window.location.href = "../dashboard";
             } else {
                 alert("Fehler: " + data.message);
             }
