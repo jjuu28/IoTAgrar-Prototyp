@@ -1,6 +1,6 @@
 
-const socket = new WebSocket('wss://node-red.studybuddy.top/liveData');
-const apiUrl = 'https://node-red.studybuddy.top';
+const socket = new WebSocket('wss://node-red.studybuddy.top/liveDataAgrar');
+const apiUrl = 'https://node-red.studybuddy.top/agrar';
 const charts = {};
 const liveTimeouts = {};
 const defaultStartOffset = -1;
