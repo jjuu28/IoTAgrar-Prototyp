@@ -54,16 +54,19 @@ async function loginUser(event) {
             if (data.success) {
                 alert("Login erfolgreich!");
 
-                // Benutzer-ID speichern (falls der Server sie zurückgibt)
-                if (data.userId) {
+                // Benutzer-ID und Token speichern (falls der Server sie zurückgibt)
+                if (data.userId && data.token) {
                     console.log("Eingeloggte userId:", data.userId);
+                    console.log("Empfangener Token:", data.token);
 
                     if (rememberMe) {
                         // Speichern im LocalStorage (bleibt nach Browser-Neustart erhalten)
                         localStorage.setItem("userId", data.userId);
+                        localStorage.setItem("authToken", data.token);
                     } else {
                         // Speichern in der SessionStorage (nur für die aktuelle Sitzung)
                         sessionStorage.setItem("userId", data.userId);
+                        sessionStorage.setItem("authToken", data.token);
                     }
                 }
 
@@ -82,11 +85,26 @@ async function loginUser(event) {
 // Prüft, ob der Benutzer schon eingeloggt ist
 function checkLoggedInUser() {
     const userId = localStorage.getItem("userId") || sessionStorage.getItem("userId");
+    const authToken = localStorage.getItem("authToken") || sessionStorage.getItem("authToken");
 
-    if (userId) {
-        console.log("Benutzer bereits eingeloggt:", userId);
+    if (userId && authToken) {
+        console.log("Benutzer bereits eingeloggt:", { userId, authToken });
         window.location.href = "dashboard.html"; // Direkt weiterleiten
     }
+}
+
+// Benutzer-Logout-Funktion
+function logoutUser() {
+    console.log("Benutzer wird ausgeloggt...");
+
+    // Entfernt userId und Token aus dem Storage
+    localStorage.removeItem("userId");
+    localStorage.removeItem("authToken");
+    sessionStorage.removeItem("userId");
+    sessionStorage.removeItem("authToken");
+
+    // Weiterleitung zur Login-Seite
+    window.location.href = "../login";
 }
 
 document.getElementById("loginForm").addEventListener("submit", loginUser);
