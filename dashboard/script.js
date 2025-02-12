@@ -9,8 +9,11 @@ async function loadDashboard() {
     const authToken = localStorage.getItem('authToken') || sessionStorage.getItem('authToken');
     if (!authToken) {
         console.warn("Kein Token gefunden. Weiterleitung zur Login-Seite...");
-        window.location.href = "/login.html";
-        return;
+        console.log(authToken);
+        console.log(localStorage.getItem('authToken'));
+        console.log(sessionStorage.getItem('authToken'));
+        //window.location.href = "/Login";
+        //return;
     }
     const sensors = await fetchSensors();
     sensors.forEach(sensor => {
