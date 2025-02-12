@@ -12,14 +12,18 @@
   <h2>Login</h2>
   <form id="loginForm">
     <div class="form-group">
-      <label for="login-email">E-Mail</label>
-      <input type="email" id="login-email" required>
-      <span class="error" id="loginEmailError"></span>
+      <label for="email">E-Mail</label>
+      <input type="email" id="email" required>
+      <span class="error" id="emailError"></span>
     </div>
     <div class="form-group">
-      <label for="login-password">Passwort</label>
-      <input type="password" id="login-password" required>
-      <span class="error" id="loginPasswordError"></span>
+      <label for="password">Passwort</label>
+      <input type="password" id="password" required>
+      <span class="error" id="passwordError"></span>
+    </div>
+    <div class="form-group">
+      <input type="checkbox" id="rememberMe">
+      <label for="rememberMe">Angemeldet bleiben</label>
     </div>
     <button type="submit">Login</button>
   </form>
