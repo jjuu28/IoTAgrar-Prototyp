@@ -38,7 +38,7 @@ async function loginUser(event) {
             console.log("Sende Login-Daten an Node-RED:", requestData);
 
             const response = await fetch(`${apiUrl}/login`, {
-                method: "GET",
+                method: "POST",
                 headers: {
                     "Content-Type": "application/json"
                 },
