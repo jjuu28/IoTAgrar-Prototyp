@@ -3,20 +3,26 @@ const apiUrl = 'https://node-red.studybuddy.top/agrar';
 async function registerUser(event) {
     event.preventDefault();
 
-    const name = document.getElementById("name").value.trim();
+    const firstname = document.getElementById("firstname").value.trim();
+    const lastname = document.getElementById("lastname").value.trim();
     const email = document.getElementById("email").value.trim();
     const password = document.getElementById("password").value.trim();
 
     let valid = true;
 
     // Fehlertexte zurücksetzen
-    document.getElementById("nameError").innerText = "";
+    document.getElementById("firstnameError").innerText = "";
+    document.getElementById("lastnameError").innerText = "";
     document.getElementById("emailError").innerText = "";
     document.getElementById("passwordError").innerText = "";
 
-    // Validierung
-    if (name.length < 3) {
-        document.getElementById("nameError").innerText = "Name muss mindestens 3 Zeichen lang sein.";
+    // Validierung der Eingaben
+    if (firstname.length < 3) {
+        document.getElementById("firstnameError").innerText = "Vorname muss mindestens 3 Zeichen lang sein.";
+        valid = false;
+    }
+    if (lastname.length < 3) {
+        document.getElementById("lastnameError").innerText = "Nachname muss mindestens 3 Zeichen lang sein.";
         valid = false;
     }
     if (!email.includes("@")) {
@@ -31,7 +37,8 @@ async function registerUser(event) {
     // Falls alle Eingaben gültig sind, Daten an Node-RED senden
     if (valid) {
         const requestData = {
-            name: name,
+            firstname: firstname,
+            lastname: lastname,
             email: email,
             password: password
         };
