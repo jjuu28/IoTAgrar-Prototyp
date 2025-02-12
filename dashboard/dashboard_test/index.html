@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IoT System - Startseite</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="container">
+    <header>
+        <h2>IoT System - Startseite</h2>
+        <div class="user-info">
+            <span class="avatar">👤</span>
+            <p>Hallo Adrian!<br><small>Überwache deine Felder!</small></p>
+        </div>
+    </header>
+
+    <section class="quick-actions">
+        <button>Sensor Überblick</button>
+        <button>Sensor Gruppen</button>
+        <button>Datenexport</button>
+    </section>
+
+    <section class="alerts">
+        <h3>Wichtige Meldungen:
+            <select>
+                <option>Alle Benachrichtigungen</option>
+            </select>
+        </h3>
+        <div class="alert urgent">
+            <strong>Dringend!</strong> <br>
+            <p>Sensor Warnung</p>
+            <p>Luftfeuchtigkeit Sensor - Feld 3</p>
+            <p><strong>Sensor Störung erkannt</strong></p>
+            <span>🔔</span>
+        </div>
+    </section>
+
+    <section class="sensor-updates">
+        <h3>Letzte Sensor Änderungen:</h3>
+        <div class="sensor-item">
+            <span>🌡️</span>
+            <p><strong>Temperatur Sensor</strong> (Feld 1)<br> Temperatur erhöht um 2°C → 24°C</p>
+        </div>
+        <div class="sensor-item">
+            <span>💧</span>
+            <p><strong>Luftfeuchtigkeit Sensor</strong> (Feld 2)<br> Luftfeuchtigkeit unter dem Grenzwert → 35%</p>
+        </div>
+    </section>
+
+    <section class="field-overview">
+        <h3>Feld 1 Übersicht <button>Details anzeigen</button></h3>
+        <div class="field-data">
+            <div class="box">
+                <p>Temperatur</p>
+                <p><strong>24°C</strong></p>
+                <p>+2°C</p>
+            </div>
+            <div class="box">
+                <p>Luftfeuchtigkeit</p>
+                <p><strong>45%</strong></p>
+                <p>+2%</p>
+            </div>
+        </div>
+    </section>
+
+    <div class="map">Feld Standort</div>
+
+    <nav class="bottom-nav">
+        <button>🏠 Startseite</button>
+        <button>📊 Dashboard</button>
+        <button>⚙️ Einstellungen</button>
+    </nav>
+</div>
+</body>
+</html>
