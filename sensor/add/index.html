@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sensor hinzufügen</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+  <h1>Sensor hinzufügen</h1>
+  <button onclick="logout()">Logout</button>
+</header>
+
+<main>
+  <form id="addSensorForm">
+    <label for="sensorId">Sensor ID:</label>
+    <input type="text" id="sensorId" name="sensorId" required>
+
+    <label for="valueName">Wert Name:</label>
+    <input type="text" id="valueName" name="valueName" required>
+
+    <button type="submit">Hinzufügen</button>
+  </form>
+</main>
+
+<footer>
+  <p>© 2024 Sensor Management</p>
+</footer>
+
+<script>
+  const apiUrl = 'https://node-red.studybuddy.top/agrar';
+
+  document.getElementById('addSensorForm').addEventListener('submit', async function(event) {
+    event.preventDefault();
+    const authToken = localStorage.getItem('authToken') || sessionStorage.getItem('authToken');
+    if (!authToken) {
+      alert("Nicht authentifiziert. Bitte einloggen.");
+      return;
+    }
+
+    const sensorId = document.getElementById('sensorId').value;
+    const valueName = document.getElementById('valueName').value;
+
+    const response = await fetch(`${apiUrl}/addSensor`, {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${authToken}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ sensorId, valueName })
+    });
+
+    if (response.ok) {
+      alert("Sensor erfolgreich hinzugefügt!");
+      document.getElementById('addSensorForm').reset();
+    } else {
+      alert("Fehler beim Hinzufügen des Sensors.");
+    }
+  });
+
+  function logout() {
+    localStorage.removeItem("authToken");
+    localStorage.removeItem("userId");
+    sessionStorage.removeItem("authToken");
+    sessionStorage.removeItem("userId");
+    window.location.href = "/login.html";
+  }
+</script>
+</body>
+</html>
