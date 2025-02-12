@@ -1,0 +1,63 @@
+const apiUrl = 'https://node-red.studybuddy.top/agrar';
+
+async function registerUser(event) {
+    event.preventDefault();
+
+    const name = document.getElementById("name").value.trim();
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value.trim();
+
+    let valid = true;
+
+    // Fehlertexte zurücksetzen
+    document.getElementById("nameError").innerText = "";
+    document.getElementById("emailError").innerText = "";
+    document.getElementById("passwordError").innerText = "";
+
+    // Validierung
+    if (name.length < 3) {
+        document.getElementById("nameError").innerText = "Name muss mindestens 3 Zeichen lang sein.";
+        valid = false;
+    }
+    if (!email.includes("@")) {
+        document.getElementById("emailError").innerText = "Gültige E-Mail-Adresse eingeben.";
+        valid = false;
+    }
+    if (password.length < 6) {
+        document.getElementById("passwordError").innerText = "Passwort muss mindestens 6 Zeichen lang sein.";
+        valid = false;
+    }
+
+    // Falls alle Eingaben gültig sind, Daten an Node-RED senden
+    if (valid) {
+        const requestData = {
+            name: name,
+            email: email,
+            password: password
+        };
+
+        try {
+            const response = await fetch(`${apiUrl}/register`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(requestData)
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                alert("Registrierung erfolgreich!");
+                window.location.href = "login.html"; // Weiterleitung zur Login-Seite
+            } else {
+                alert("Fehler: " + data.message);
+            }
+        } catch (error) {
+            console.error("Fehler:", error);
+            alert("Ein Fehler ist aufgetreten. Bitte versuche es erneut.");
+        }
+    }
+}
+
+document.getElementById("registerForm").addEventListener("submit", registerUser);

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registrierung</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="container">
+    <h2>Registrieren</h2>
+    <form id="registerForm">
+        <div class="form-group">
+            <label for="firstname">Vorname</label>
+            <input type="text" id="firstname" required>
+            <span class="error" id="firstnameError"></span>
+        </div>
+        <div class="form-group">
+            <label for="lastname">Firstname</label>
+            <input type="text" id="lastname" required>
+            <span class="error" id="lastnameError"></span>
+        </div>
+        <div class="form-group">
+            <label for="email">E-Mail</label>
+            <input type="email" id="email" required>
+            <span class="error" id="emailError"></span>
+        </div>
+        <div class="form-group">
+            <label for="password">Passwort</label>
+            <input type="password" id="password" required>
+            <span class="error" id="passwordError"></span>
+        </div>
+        <button type="submit">Registrieren</button>
+    </form>
+    <a href="hiernochlogin.link">Sie sind schon registriert? </a>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>

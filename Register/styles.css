@@ -1,0 +1,73 @@
+/* Grundlayout */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+/* Container für das Formular */
+.container {
+    background: white;
+    padding: 40px; /* Mehr Abstand für Symmetrie */
+    border-radius: 12px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    width: 420px; /* Breiter für eine ausgeglichene Optik */
+    text-align: center; /* Überschrift und Button mittig */
+}
+
+/* Überschrift */
+h2 {
+    margin-bottom: 25px;
+    font-size: 26px;
+}
+
+/* Formular-Felder */
+.form-group {
+    margin-bottom: 20px;
+    text-align: left; /* Labels links ausgerichtet */
+}
+
+/* Labels */
+label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+/* Eingabefelder */
+input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 16px;
+    box-sizing: border-box; /* Verhindert Größenprobleme */
+}
+
+/* Button */
+button {
+    width: 100%;
+    padding: 14px;
+    background: #28a745;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+/* Hover-Effekt */
+button:hover {
+    background: #218838;
+}
+
+/* Fehlermeldungen */
+.error {
+    color: red;
+    font-size: 14px;
+}
