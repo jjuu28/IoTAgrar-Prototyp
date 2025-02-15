@@ -187,3 +187,9 @@ footer {
 footer.dark-mode {
     color: #bbb;
 }
+
+
+canvas {
+    width: 100% !important;
+    height: 300px !important; /* Fixierte Höhe */
+}

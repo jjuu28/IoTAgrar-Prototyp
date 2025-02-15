@@ -12,8 +12,8 @@ async function loadDashboard() {
         console.log(authToken);
         console.log(localStorage.getItem('authToken'));
         console.log(sessionStorage.getItem('authToken'));
-        //window.location.href = "/Login";
-        //return;
+        window.location.href = "/Login";
+        return;
     }
     const sensors = await fetchSensors();
     sensors.forEach(sensor => {
@@ -44,6 +44,7 @@ async function fetchSensors() {
 
 async function fetchSensorData(sensorId, valueName, startOffset, endOffset) {
     const authToken = localStorage.getItem('authToken') || sessionStorage.getItem('authToken');
+
     try {
         const response = await fetch(`${apiUrl}/data?sensorId=${sensorId}&valueName=${valueName}&startOffset=${startOffset}&endOffset=${endOffset}`, {
             method: "GET",
@@ -52,16 +53,23 @@ async function fetchSensorData(sensorId, valueName, startOffset, endOffset) {
                 "Content-Type": "application/json"
             }
         });
+
         if (!response.ok) {
-            throw new Error("Fehler beim Abrufen der Sensordaten");
+            throw new Error(`Fehler beim Abrufen der Sensordaten (${response.status} ${response.statusText})`);
         }
-        return await response.json();
+
+        const data = await response.json(); // Hier sicherstellen, dass `data` definiert ist
+        console.log(`Empfangene Daten für ${sensorId} (${valueName}):`, data);
+
+        return data; // Stelle sicher, dass `data` immer zurückgegeben wird
+
     } catch (error) {
         console.error(`Error fetching data for sensor ${sensorId}:`, error);
+        return null; // Gebe `null` zurück, falls ein Fehler auftritt, damit die Folgefunktionen nicht abstürzen
     }
 }
 
-function createSensorCard(sensor) {
+/*function createSensorCard(sensor) {
     const container = document.createElement('div');
     container.className = 'grid-item';
     container.id = `sensor-${sensor.ident}`;
@@ -76,7 +84,50 @@ function createSensorCard(sensor) {
         <canvas></canvas>
     `;
     document.getElementById('main-dashboard').appendChild(container);
+ }
+ */
+
+function createSensorCard(sensor) {
+    const container = document.createElement('div');
+    container.className = 'grid-item';
+    container.id = `sensor-${sensor.ident}`;
+    container.innerHTML = `
+        <h3>${sensor.valueName} (${sensor.sensorId})</h3>
+        <div style="display: flex; align-items: center;">
+            <div id="status-indicator-${sensor.ident}" style="width: 10px; height: 10px; border-radius: 50%; background-color: gray; margin-right: 10px;"></div>
+            <button onclick="updateSensorData('${sensor.sensorId}', '${sensor.valueName}', '${sensor.ident}', -1, 0)">Last Hour</button>
+            <button onclick="enableLiveData('${sensor.ident}', true)">Live</button>
+            <button onclick="promptCustomRange('${sensor.sensorId}', '${sensor.valueName}', '${sensor.ident}')">Custom Range</button>
+        </div>
+        <canvas id="chart-${sensor.ident}"></canvas>
+    `;
+
+    document.getElementById('main-dashboard').appendChild(container);
+
+    // 📌 Chart initialisieren
+    const ctx = document.getElementById(`chart-${sensor.ident}`).getContext("2d");
+    charts[sensor.ident] = new Chart(ctx, {
+        type: "line",
+        data: {
+            labels: [],
+            datasets: [{
+                label: sensor.valueName,
+                borderColor: "blue",
+                backgroundColor: "rgba(0,0,255,0.1)",
+                data: []
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                x: { display: true },
+                y: { display: true }
+            }
+        }
+    });
 }
+
 
 function enableLiveData(ident, buttonClick) {
     if (charts[ident]) {

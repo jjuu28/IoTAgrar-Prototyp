@@ -17,11 +17,13 @@
     <label for="sensorId">Sensor ID:</label>
     <input type="text" id="sensorId" name="sensorId" required>
 
-    <label for="valueName">Wert Name:</label>
-    <input type="text" id="valueName" name="valueName" required>
+    <!label for="valueName"Wert Name:<!/label>
+    <!input type="text" id="valueName" name="valueName" required>
 
     <button type="submit">Hinzufügen</button>
   </form>
+    <br>
+  <button><a href="../../dashboard">Zurück zum Dashboard</a></button>
 </main>
 
 <footer>
@@ -40,15 +42,15 @@
     }
 
     const sensorId = document.getElementById('sensorId').value;
-    const valueName = document.getElementById('valueName').value;
+    //const valueName = document.getElementById('valueName').value;
 
-    const response = await fetch(`${apiUrl}/addSensor`, {
+    const response = await fetch(`${apiUrl}/sensor/add`, {
       method: "POST",
       headers: {
         "Authorization": `Bearer ${authToken}`,
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({ sensorId, valueName })
+      body: JSON.stringify({ sensorId })
     });
 
     if (response.ok) {
