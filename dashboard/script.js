@@ -139,6 +139,16 @@ function enableLiveData(ident, buttonClick) {
     }
 }
 
+function promptCustomRange(sensorId, valueName, ident) {
+    const startOffset = prompt('Gib den Start-Offset in Stunden ein (z.B. -24 für die letzten 24 Stunden):', '-1');
+    const endOffset = prompt('Gib den End-Offset in Stunden ein (z.B. 0 für jetzt):', '0');
+
+    if (startOffset !== null && endOffset !== null) {
+        updateSensorData(sensorId, valueName, ident, parseFloat(startOffset), parseFloat(endOffset));
+    }
+}
+
+
 function disableLiveData(ident) {
     if (charts[ident]) {
         charts[ident].isLive = false;
