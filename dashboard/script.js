@@ -38,6 +38,7 @@ async function fetchSensors() {
         }
         return await response.json();
     } catch (error) {
+        logout();
         console.error('Error fetching sensors:', error);
     }
 }
@@ -169,22 +170,48 @@ function logout() {
     localStorage.removeItem("userId");
     sessionStorage.removeItem("authToken");
     sessionStorage.removeItem("userId");
-    window.location.href = "/login.html";
+    window.location.href = "../Login.html";
 }
 
 socket.onmessage = (event) => {
     try {
+        console.log("📩 Received live data:", event.data);
         const data = JSON.parse(event.data);
-        const ident = data.ident;
-        if (charts[ident] && charts[ident].isLive) {
-            const chart = charts[ident];
-            const timeLabel = new Date().toLocaleTimeString();
-            chart.data.labels.push(timeLabel);
-            chart.data.datasets[0].data.push(data.value);
-            chart.update();
+
+        console.log("➡ Ident:", data.ident);
+        console.log("➡ Value:", data.value);
+
+        if (!charts[data.ident]) {
+            console.warn(`⚠️ Kein Chart für Ident '${data.ident}' gefunden!`);
+            return;
         }
+        else {
+            console.log(`✅ Chart für Ident '${data.ident}' gefunden.`);
+        }
+
+
+        if (!charts[data.ident].isLive) {
+            console.warn(`⏸ Chart '${data.ident}' ist nicht im Live-Modus!`);
+            return;
+        }
+        else {
+            console.log(`✅ Chart '${data.ident}' ist im Live-Modus.`);
+        }
+        const chart = charts[data.ident];
+        const timeLabel = new Date().toLocaleTimeString();
+        console.log(`✅ Daten für ${data.ident} hinzugefügt: ${data.value}`);
+
+        chart.data.labels.push(timeLabel);
+        chart.data.datasets[0].data.push(data.value);
+
+        if (chart.data.labels.length > 20) {
+            chart.data.labels.shift();
+            chart.data.datasets[0].data.shift();
+        }
+
+        chart.update();
     } catch (error) {
-        console.error("Error processing live data:", error);
+        console.error("❌ Fehler beim Verarbeiten der WebSocket-Daten:", error);
     }
 };
 
