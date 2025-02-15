@@ -9,9 +9,6 @@ async function loadDashboard() {
     const authToken = localStorage.getItem('authToken') || sessionStorage.getItem('authToken');
     if (!authToken) {
         console.warn("Kein Token gefunden. Weiterleitung zur Login-Seite...");
-        console.log(authToken);
-        console.log(localStorage.getItem('authToken'));
-        console.log(sessionStorage.getItem('authToken'));
         window.location.href = "/Login";
         return;
     }
@@ -38,8 +35,8 @@ async function fetchSensors() {
         }
         return await response.json();
     } catch (error) {
-        logout();
         console.error('Error fetching sensors:', error);
+        logout();
     }
 }
 
@@ -59,39 +56,22 @@ async function fetchSensorData(sensorId, valueName, startOffset, endOffset) {
             throw new Error(`Fehler beim Abrufen der Sensordaten (${response.status} ${response.statusText})`);
         }
 
-        const data = await response.json(); // Hier sicherstellen, dass `data` definiert ist
+        const data = await response.json();
         console.log(`Empfangene Daten für ${sensorId} (${valueName}):`, data);
 
-        return data; // Stelle sicher, dass `data` immer zurückgegeben wird
+        return data;
 
     } catch (error) {
         console.error(`Error fetching data for sensor ${sensorId}:`, error);
-        return null; // Gebe `null` zurück, falls ein Fehler auftritt, damit die Folgefunktionen nicht abstürzen
+        return null;
     }
 }
-
-/*function createSensorCard(sensor) {
-    const container = document.createElement('div');
-    container.className = 'grid-item';
-    container.id = `sensor-${sensor.ident}`;
-    container.innerHTML = `
-        <h3>${sensor.valueName} (${sensor.sensorId})</h3>
-        <div style="display: flex; align-items: center;">
-            <div id="status-indicator-${sensor.ident}" style="width: 10px; height: 10px; border-radius: 50%; background-color: gray; margin-right: 10px;"></div>
-            <button onclick="updateSensorData('${sensor.sensorId}', '${sensor.valueName}', '${sensor.ident}', -1, 0)">Last Hour</button>
-            <button onclick="enableLiveData('${sensor.ident}', true)">Live</button>
-            <button onclick="promptCustomRange('${sensor.sensorId}', '${sensor.valueName}', '${sensor.ident}')">Custom Range</button>
-        </div>
-        <canvas></canvas>
-    `;
-    document.getElementById('main-dashboard').appendChild(container);
- }
- */
 
 function createSensorCard(sensor) {
     const container = document.createElement('div');
     container.className = 'grid-item';
     container.id = `sensor-${sensor.ident}`;
+
     container.innerHTML = `
         <h3>${sensor.valueName} (${sensor.sensorId})</h3>
         <div style="display: flex; align-items: center;">
@@ -105,17 +85,17 @@ function createSensorCard(sensor) {
 
     document.getElementById('main-dashboard').appendChild(container);
 
-    // 📌 Chart initialisieren
     const ctx = document.getElementById(`chart-${sensor.ident}`).getContext("2d");
     charts[sensor.ident] = new Chart(ctx, {
         type: "line",
         data: {
             labels: [],
             datasets: [{
-                label: sensor.valueName,
+                label: `${sensor.valueName} (${sensor.unit})`,
+                data: [],
                 borderColor: "blue",
                 backgroundColor: "rgba(0,0,255,0.1)",
-                data: []
+                borderWidth: 2
             }]
         },
         options: {
@@ -129,16 +109,49 @@ function createSensorCard(sensor) {
     });
 }
 
-
 function enableLiveData(ident, buttonClick) {
     if (charts[ident]) {
         charts[ident].isLive = true;
+
+        const statusIndicator = document.getElementById(`status-indicator-${ident}`);
+        if (statusIndicator) {
+            statusIndicator.style.backgroundColor = 'gray';
+        }
+
+        if (liveTimeouts[ident]) {
+            clearTimeout(liveTimeouts[ident]);
+        }
+
+        liveTimeouts[ident] = setTimeout(() => {
+            const statusIndicator = document.getElementById(`status-indicator-${ident}`);
+            if (statusIndicator) {
+                statusIndicator.style.backgroundColor = 'red';
+            }
+        }, 30000);
+
+        if (buttonClick) {
+            charts[ident].data.datasets[0].pointStyle = 'circle';
+            charts[ident].data.datasets[0].pointRadius = 3;
+            charts[ident].data.labels = [];
+            charts[ident].data.datasets[0].data = [];
+            charts[ident].update();
+        }
     }
 }
 
 function disableLiveData(ident) {
     if (charts[ident]) {
         charts[ident].isLive = false;
+
+        const statusIndicator = document.getElementById(`status-indicator-${ident}`);
+        if (statusIndicator) {
+            statusIndicator.style.backgroundColor = 'red';
+        }
+
+        if (liveTimeouts[ident]) {
+            clearTimeout(liveTimeouts[ident]);
+            delete liveTimeouts[ident];
+        }
     }
 }
 
@@ -150,56 +163,34 @@ function updateSensorData(sensorId, valueName, ident, startOffset, endOffset) {
             chart.data.datasets[0].data = data.values;
             chart.update();
         }
+
+        if (endOffset === 0) {
+            enableLiveData(ident, false);
+        } else {
+            disableLiveData(ident);
+        }
     });
-}
-
-function promptCustomRange(sensorId, valueName, ident) {
-    const startOffset = prompt('Enter start offset in hours:', '-1');
-    const endOffset = prompt('Enter end offset in hours:', '0');
-    if (startOffset !== null && endOffset !== null) {
-        updateSensorData(sensorId, valueName, ident, parseFloat(startOffset), parseFloat(endOffset));
-    }
-}
-
-function toggleDarkMode() {
-    document.body.classList.toggle('dark-mode');
-}
-
-function logout() {
-    localStorage.removeItem("authToken");
-    localStorage.removeItem("userId");
-    sessionStorage.removeItem("authToken");
-    sessionStorage.removeItem("userId");
-    window.location.href = "../Login.html";
 }
 
 socket.onmessage = (event) => {
     try {
-        console.log("📩 Received live data:", event.data);
         const data = JSON.parse(event.data);
+        const ident = data.ident;
 
-        console.log("➡ Ident:", data.ident);
-        console.log("➡ Value:", data.value);
-
-        if (!charts[data.ident]) {
-            console.warn(`⚠️ Kein Chart für Ident '${data.ident}' gefunden!`);
+        if (!charts[ident]) {
+            console.warn(`⚠️ Kein Chart für Ident '${ident}' gefunden!`);
             return;
         }
-        else {
-            console.log(`✅ Chart für Ident '${data.ident}' gefunden.`);
-        }
 
-
-        if (!charts[data.ident].isLive) {
-            console.warn(`⏸ Chart '${data.ident}' ist nicht im Live-Modus!`);
+        if (!charts[ident].isLive) {
+            console.warn(`⏸ Chart '${ident}' ist nicht im Live-Modus!`);
             return;
         }
-        else {
-            console.log(`✅ Chart '${data.ident}' ist im Live-Modus.`);
-        }
-        const chart = charts[data.ident];
+
+        const chart = charts[ident];
         const timeLabel = new Date().toLocaleTimeString();
-        console.log(`✅ Daten für ${data.ident} hinzugefügt: ${data.value}`);
+
+        console.log(`✅ Daten für ${ident} hinzugefügt: ${data.value}`);
 
         chart.data.labels.push(timeLabel);
         chart.data.datasets[0].data.push(data.value);
@@ -210,9 +201,32 @@ socket.onmessage = (event) => {
         }
 
         chart.update();
+
+        const statusIndicator = document.getElementById(`status-indicator-${ident}`);
+        if (statusIndicator) {
+            statusIndicator.style.backgroundColor = 'green';
+        }
+
+        if (liveTimeouts[ident]) {
+            clearTimeout(liveTimeouts[ident]);
+        }
+
+        liveTimeouts[ident] = setTimeout(() => {
+            const statusIndicator = document.getElementById(`status-indicator-${ident}`);
+            if (statusIndicator) {
+                statusIndicator.style.backgroundColor = 'red';
+            }
+        }, 30000);
+
     } catch (error) {
         console.error("❌ Fehler beim Verarbeiten der WebSocket-Daten:", error);
     }
 };
+
+function logout() {
+    localStorage.removeItem("authToken");
+    sessionStorage.removeItem("authToken");
+    window.location.href = "../Login.html";
+}
 
 loadDashboard();
