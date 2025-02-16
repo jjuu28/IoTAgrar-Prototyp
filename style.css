@@ -1,0 +1,55 @@
+/* Container */
+.container {
+    background: white;
+    max-width: 600px;
+    margin: 20px auto;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Wichtige Meldungen */
+.notifications, .sensor-changes {
+    background: #ffeb3b;
+    padding: 15px;
+    border-radius: 6px;
+    font-weight: bold;
+    margin: 15px 0;
+}
+
+.notification {
+    background: #ffcc80;
+    padding: 10px;
+    margin-top: 5px;
+    border-radius: 6px;
+}
+
+/* Sensor Änderungen */
+.sensor-update {
+    background: #e3f2fd;
+    padding: 10px;
+    border-radius: 6px;
+    margin: 5px 0;
+}
+
+/* Navigation */
+footer {
+    display: flex;
+    justify-content: space-between;
+    padding-top: 20px;
+}
+
+.nav-button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 6px;
+    width: 30%;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.nav-button:hover {
+    background-color: #0056b3;
+}

@@ -1,11 +1,63 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
     <meta charset="UTF-8">
-    <title>First Test</title>
-    It works!
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IoT Sensor Dashboard</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
+<div class="container">
+    <!-- Header -->
+    <header>
+        <h1>IoT Sensor Dashboard</h1>
+    </header>
+
+    <!-- Begrüßung -->
+    <section class="welcome">
+        <p>👋 Hallo Adrian! Überwache deine Felder!</p>
+    </section>
+
+    <!-- Haupt-Buttons -->
+    <div class="button-container">
+        <button class="main-button">Sensor Übersicht</button>
+        <button class="main-button">Sensor Gruppen</button>
+        <button class="main-button">Datenexport</button>
+    </div>
+
+    <!-- Wichtige Meldungen (werden dynamisch geladen) -->
+    <section class="notifications">
+        <h2>Wichtige Meldungen:</h2>
+        <div id="notifications-container">
+            <p>Lade Meldungen...</p>
+        </div>
+    </section>
+
+    <!-- Letzte Sensoränderungen (Live-Daten aus Backend) -->
+    <section class="sensor-changes">
+        <h2>Letzte Sensor Änderungen:</h2>
+        <div id="sensor-changes-container">
+            <p>Lade letzte Änderungen...</p>
+        </div>
+    </section>
+
+    <!-- Live Sensordaten -->
+    <section class="sensor-live">
+        <h2>Live Sensordaten</h2>
+        <div id="main-dashboard">
+            <!-- Sensor-Karten werden hier dynamisch eingefügt -->
+        </div>
+    </section>
+
+    <!-- Navigation (Fixe Buttons) -->
+    <footer>
+        <button class="nav-button" onclick="navigateTo('home')">🏠 Startseite</button>
+        <button class="nav-button" onclick="navigateTo('dashboard')">📊 Dashboard</button>
+        <button class="nav-button" onclick="navigateTo('settings')">⚙ Einstellungen</button>
+    </footer>
+</div>
+
+<script src="script.js"></script>
 </body>
 </html>

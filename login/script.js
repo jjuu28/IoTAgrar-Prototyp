@@ -73,7 +73,7 @@ async function loginUser(event) {
                 }
 
                 // Weiterleitung zur Dashboard-Seite
-                window.location.href = "../dashboard";
+                window.location.href = "../dashboard_old";
             } else {
                 alert("Fehler: " + data.message);
             }
