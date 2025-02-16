@@ -36,7 +36,8 @@ async function fetchSensors() {
         return await response.json();
     } catch (error) {
         console.error('Error fetching sensors:', error);
-        logout();
+        //logout();
+        console.warn("Fehler beim Abrufen der Sensoren. Sensor hinzufügen oder einloggen!");
     }
 }
 
