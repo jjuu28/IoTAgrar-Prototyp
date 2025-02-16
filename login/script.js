@@ -106,7 +106,7 @@ function logoutUser() {
     sessionStorage.removeItem("authToken");
 
     // Weiterleitung zur Login-Seite
-    window.location.href = "../login";
+    window.location.href = "";
 }
 
 document.getElementById("loginForm").addEventListener("submit", loginUser);
