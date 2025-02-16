@@ -86,6 +86,12 @@ function createSensorCard(sensor) {
     document.getElementById('main-dashboard').appendChild(container);
 
     const ctx = document.getElementById(`chart-${sensor.ident}`).getContext("2d");
+
+    const isDarkMode = document.body.classList.contains('dark-mode');
+    const lineColor = isDarkMode ? '#9c27b0' : '#03a9f4';
+    const backgroundColor = isDarkMode ? 'rgba(156, 39, 176, 0.2)' : 'rgba(3, 169, 244, 0.2)';
+
+
     charts[sensor.ident] = new Chart(ctx, {
         type: "line",
         data: {
@@ -93,8 +99,10 @@ function createSensorCard(sensor) {
             datasets: [{
                 label: `${sensor.valueName} (${sensor.unit})`,
                 data: [],
-                borderColor: "blue",
-                backgroundColor: "rgba(0,0,255,0.1)",
+                //borderColor: "blue",
+                //backgroundColor: "rgba(0,0,255,0.1)",
+                borderColor: lineColor,
+                backgroundColor: backgroundColor,
                 borderWidth: 2
             }]
         },
@@ -108,6 +116,8 @@ function createSensorCard(sensor) {
         }
     });
 }
+
+
 
 function enableLiveData(ident, buttonClick) {
     if (charts[ident]) {
@@ -164,6 +174,39 @@ function disableLiveData(ident) {
         }
     }
 }
+
+function toggleDarkMode() {
+    const body = document.body;
+    const header = document.querySelector('header');
+    const footer = document.querySelector('footer');
+    const gridItems = document.querySelectorAll('.grid-item');
+    const toggleButton = document.getElementById('dark-mode-toggle');
+
+    // Dark Mode umschalten
+    body.classList.toggle('dark-mode');
+    header.classList.toggle('dark-mode');
+    footer.classList.toggle('dark-mode');
+    gridItems.forEach(item => item.classList.toggle('dark-mode'));
+
+    // Zustand in Local Storage speichern
+    if (body.classList.contains('dark-mode')) {
+        localStorage.setItem("darkMode", "enabled");
+        toggleButton.innerHTML = '🌞';
+    } else {
+        localStorage.setItem("darkMode", "disabled");
+        toggleButton.innerHTML = '🌙';
+    }
+
+    // Farben für Charts anpassen
+    Object.values(charts).forEach(chart => {
+        chart.data.datasets[0].borderColor = body.classList.contains('dark-mode') ? '#9c27b0' : '#03a9f4';
+        chart.data.datasets[0].backgroundColor = body.classList.contains('dark-mode') ? 'rgba(156, 39, 176, 0.2)' : 'rgba(3, 169, 244, 0.2)';
+        chart.update();
+    });
+
+    console.log("Dark Mode ist jetzt:", body.classList.contains('dark-mode') ? "AKTIV" : "DEAKTIVIERT");
+}
+
 
 function updateSensorData(sensorId, valueName, ident, startOffset, endOffset) {
     fetchSensorData(sensorId, valueName, startOffset, endOffset).then(data => {
