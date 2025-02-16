@@ -1,11 +1,40 @@
 // API URL für Backend-Daten
 const apiUrl = 'https://node-red.studybuddy.top/agrar';
 
-// Holt die neuesten Meldungen aus dem Backend
-async function fetchNotifications() {
+// Startet die Homepage-Datenabfrage & überprüft Authentifizierung
+async function loadhomepage() {
     const authToken = localStorage.getItem('authToken') || sessionStorage.getItem('authToken');
+    if (!authToken) {
+        console.warn("Kein Token gefunden. Weiterleitung zur Login-Seite...");
+        window.location.href = "/login";
+        return;
+    }
+
     try {
-        const response = await fetch(`${apiUrl}/notifications`, {
+        // Lade Warnungen & Sensoränderungen parallel
+        const [warnings, sensorChanges] = await Promise.all([
+            fetchWarnings(),
+            fetchSensorChanges()
+        ]);
+
+        displayWarnings(warnings);
+        displaySensorChanges(sensorChanges);
+    } catch (error) {
+        console.error("Fehler beim Laden der Homepage-Daten:", error);
+    }
+}
+
+// API-Anfragen mit Authentifizierung
+async function fetchWithAuth(endpoint) {
+    const authToken = localStorage.getItem('authToken') || sessionStorage.getItem('authToken');
+
+    if (!authToken) {
+        console.warn("Kein Token gefunden. Abbruch der Anfrage.");
+        return null;
+    }
+
+    try {
+        const response = await fetch(`${apiUrl}/${endpoint}`, {
             method: "GET",
             headers: {
                 "Authorization": `Bearer ${authToken}`,
@@ -14,33 +43,37 @@ async function fetchNotifications() {
         });
 
         if (!response.ok) {
-            throw new Error("Fehler beim Abrufen der Meldungen");
+            throw new Error(`Fehler beim Abrufen der Daten (${response.status})`);
         }
 
-        const notifications = await response.json();
-        displayNotifications(notifications);
+        return await response.json();
     } catch (error) {
-        console.error("Fehler beim Laden der Meldungen:", error);
-        document.getElementById("notifications-container").innerHTML = "<p>⚠ Fehler beim Laden der Meldungen.</p>";
+        console.error(`Fehler bei der Anfrage an ${endpoint}:`, error);
+        return null;
     }
 }
 
-// Zeigt die geladenen Meldungen auf der Seite an
-function displayNotifications(notifications) {
-    const container = document.getElementById("notifications-container");
+// Holt die Warnungen aus dem Backend
+async function fetchWarnings() {
+    return await fetchWithAuth("warnings") || [];
+}
+
+// Zeigt die geladenen Warnungen auf der Seite an
+function displayWarnings(warnings) {
+    const container = document.getElementById("warnings-container");
     container.innerHTML = "";
 
-    if (notifications.length === 0) {
-        container.innerHTML = "<p>Keine neuen Meldungen.</p>";
+    if (warnings.length === 0) {
+        container.innerHTML = "<p>Keine neuen Warnungen.</p>";
         return;
     }
 
-    notifications.forEach(notification => {
+    warnings.forEach(warning => {
         const div = document.createElement("div");
-        div.className = "notification";
+        div.className = "warning";
         div.innerHTML = `
-            <strong>⚠ ${notification.title}</strong>
-            <p>${notification.message}</p>
+            <strong>⚠ ${warning.title}</strong>
+            <p>${warning.message}</p>
         `;
         container.appendChild(div);
     });
@@ -48,26 +81,7 @@ function displayNotifications(notifications) {
 
 // Holt die letzten Sensoränderungen aus dem Backend
 async function fetchSensorChanges() {
-    const authToken = localStorage.getItem('authToken') || sessionStorage.getItem('authToken');
-    try {
-        const response = await fetch(`${apiUrl}/sensor-changes`, {
-            method: "GET",
-            headers: {
-                "Authorization": `Bearer ${authToken}`,
-                "Content-Type": "application/json"
-            }
-        });
-
-        if (!response.ok) {
-            throw new Error("Fehler beim Abrufen der Sensoränderungen");
-        }
-
-        const changes = await response.json();
-        displaySensorChanges(changes);
-    } catch (error) {
-        console.error("Fehler beim Laden der Sensoränderungen:", error);
-        document.getElementById("sensor-changes-container").innerHTML = "<p>⚠ Fehler beim Laden der Sensoränderungen.</p>";
-    }
+    return await fetchWithAuth("sensor-changes") || [];
 }
 
 // Zeigt die letzten Sensoränderungen auf der Seite an
@@ -92,15 +106,18 @@ function displaySensorChanges(changes) {
 
 // Navigation Buttons
 function navigateTo(page) {
-    if (page === "home") {
-        window.location.href = "/home";
-    } else if (page === "dashboard") {
-        window.location.href = "/dashboard";
-    } else if (page === "settings") {
-        window.location.href = "/settings";
+    const routes = {
+        home: "/home",
+        dashboard: "/dashboard",
+        settings: "/settings"
+    };
+
+    if (routes[page]) {
+        window.location.href = routes[page];
+    } else {
+        console.error(`Ungültige Navigation: ${page}`);
     }
 }
 
-// Lade alle Daten beim Start
-fetchNotifications();
-fetchSensorChanges();
+// Lade die Homepage-Daten
+loadhomepage();
