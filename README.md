@@ -6,11 +6,11 @@ To-Do:
 
 Startseite:
 - Abfrage von Name 
-- Abfrage von Meldungen (Backend und Frontend anpassen)
+- Abfrage von Meldungen (Frontend anpassen)
 
 Meldungen:
-- Meldungen richtig anzeigen (frontend und backend)
-- Meldungen löschen können (F B)
+- Meldungen richtig anzeigen (frontend)
+- Meldungen löschen können (F)
 
 Einstellungen:
 - User anpassen können (F)
@@ -22,5 +22,5 @@ Sensorgruppen:
 - Gruppen löschen (F)
 
 Sensoren: 
-- Sensoren bearbeiten 
-- Grenzwerte einstellen können (Frontend und Backend)
+- Sensoren bearbeiten (machen wir nicht oder)
+- Grenzwerte einstellen können (Frontend)
