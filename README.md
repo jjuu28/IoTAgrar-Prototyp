@@ -16,10 +16,10 @@ Einstellungen:
 - User anpassen können (F)
 
 Sensorgruppen:
-- Sensor einer Gruppe zuweisen (F B)
+- Sensor einer Gruppe zuweisen (F)
 - Gruppen anzeigen (F)
-- Gruppen bearbeiten (F B)
-- Gruppen löschen (F B)
+- Gruppen bearbeiten (F)
+- Gruppen löschen (F)
 
 Sensoren: 
 - Sensoren bearbeiten 
