@@ -11,6 +11,13 @@ async function loadhomepage() {
     }
 
     try {
+
+        // Lade Benutzerdaten und speichere den Vornamen
+        const userData = await loaduserdata();
+        if (userData && userData.firstname) {
+            updateUserName(userData.firstname);
+        }
+
         // Lade Warnungen & Sensoränderungen parallel
         const [warnings, sensorChanges] = await Promise.all([
             fetchWarnings(),
@@ -24,8 +31,7 @@ async function loadhomepage() {
     }
 }
 
-// API-Anfragen mit Authentifizierung
-async function fetchWithAuth(endpoint) {
+async function loaduserdata() {
     const authToken = localStorage.getItem('authToken') || sessionStorage.getItem('authToken');
 
     if (!authToken) {
@@ -34,7 +40,8 @@ async function fetchWithAuth(endpoint) {
     }
 
     try {
-        const response = await fetch(`${apiUrl}/${endpoint}`, {
+        // Anfrage an das Backend senden
+        const response = await fetch(`${apiUrl}/User`, {
             method: "GET",
             headers: {
                 "Authorization": `Bearer ${authToken}`,
@@ -43,13 +50,26 @@ async function fetchWithAuth(endpoint) {
         });
 
         if (!response.ok) {
-            throw new Error(`Fehler beim Abrufen der Daten (${response.status})`);
+            throw new Error(`Fehler beim Abrufen der Benutzerdaten (${response.status})`);
         }
 
-        return await response.json();
+        // JSON-Antwort parsen
+        const userData = await response.json();
+
+        return userData; // Rückgabe der Benutzerdaten
+
     } catch (error) {
-        console.error(`Fehler bei der Anfrage an ${endpoint}:`, error);
+        console.error("Fehler beim Laden der Benutzerdaten:", error);
         return null;
+    }
+}
+
+// Aktualisiert den Benutzernamen in der UI
+function updateUserName(firstname) {
+    const userNameElement = document.getElementById("user-name");
+    if (userNameElement) {
+        userNameElement.textContent = firstname;
+        console.log("Vorname: " + firstname);
     }
 }
 
