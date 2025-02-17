@@ -13,7 +13,7 @@ Meldungen:
 - Meldungen löschen können (F B)
 
 Einstellungen:
-- User anpassen können (F B)
+- User anpassen können (F)
 
 Sensorgruppen:
 - Sensor einer Gruppe zuweisen (F B)
