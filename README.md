@@ -24,4 +24,3 @@ Sensorgruppen:
 Sensoren: 
 - Sensoren bearbeiten 
 - Grenzwerte einstellen können (Frontend und Backend)
-
